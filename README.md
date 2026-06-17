@@ -9,13 +9,6 @@
 
 ![시스템 아키텍처 · 설계 파이프라인](figure/fig_architecture_final.png)
 
-<p align="center">
-  <img src="figure/fig13_flexure_anim.gif" width="46%" alt="DCP 유연기구 X-스캐닝 애니메이션"/>
-  &nbsp;&nbsp;
-  <img src="figure/simulink_vcm_simscape.PNG" width="50%" alt="Simscape 물리 네트워크 블록선도"/>
-</p>
-<p align="center"><sub>좌: DCP 유연기구 X-스캐닝 모션 (변위 과장) · 우: Simulink Simscape 물리 네트워크</sub></p>
-
 ---
 
 ## 핵심 결과 (KPI)
