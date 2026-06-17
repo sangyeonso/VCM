@@ -3,7 +3,7 @@
 > **초정밀시스템설계 Term Project** · 아주대학교 D.N.A.플러스융합학과
 > 소상연 (202624279)
 
-보이스코일 모터(VCM)로 직접 구동되는 1자유도 **이중 복합 평행판(Double Compound Parallelogram, DCP)** 유연 스테이지의 설계·해석·검증 기록입니다. 개념설계 → 해석모델 → 물리한계 분석 → 최적화 → FEA 검증 → 동특성/제어의 흐름으로 진행했으며, 상용 FEA 없이 **MATLAB 보 FEM(모달) + 무료 FEMM(자기장) + 다항 대리모델**의 3중 검증으로 해석값을 보정했습니다.
+보이스코일 모터(VCM)로 직접 구동되는 1자유도 **이중 복합 평행판(Double Compound Parallelogram, DCP)** 유연 스테이지를 **유연기구–VCM 공동최적화(co-design)**로 설계하고, 모든 수식과 누락 물리를 **전수감사**하여 검증한 기록입니다. 유연기구는 **컴플라이언스 행렬법**(강의 정석, 기준예제 16.69 µm·6043 Hz 정확 재현), VCM은 **FEMM 축대칭 48점 surrogate**(N52, R²=0.996)로 모델링했습니다. 전수감사 과정에서 두 모델 오류(단순 보 강성식·발열 누락)를 발견·정정했고, **발열까지 정직하게 반영하면 본 스펙이 물리적 실현가능성 경계에 위치**함을 규명했습니다.
 
 🔗 **웹 워크북:** https://sangyeonso.github.io/VCM/ *(GitHub Pages 활성화 후)*
 
@@ -11,19 +11,20 @@
 
 ---
 
-## 핵심 결과 (KPI)
+## 핵심 결과 (KPI) — 발열까지 반영한 정직한 판정
 
 | 항목 | 목표 | 달성 | 판정 |
 |---|---|---|---|
-| 1차 공진 $f_1$ | > 100 Hz | **105.3 Hz** | ✅ |
-| 행정 (stroke) @ 2 A | > 1 mm | **1.05 mm** | ✅ |
-| 행정 1 mm 도달 전류 | ≤ 2 A | **1.9 A** | ✅ |
-| 외형 | ≤ 200×200×20 mm | 충족 | ✅ |
-| 코일 와이어경 $d_c$ | > 0.5 mm | 0.3 mm | ⚠️ 완화* |
+| 충족률 $\gamma$ | ≥ 1.0 | **0.93** | ⚠️ 경계 |
+| 1차 공진 $f_1$ | > 100 Hz | 92.6 Hz | −7% |
+| 행정 (stroke) @ 2 A | > 1 mm | 0.93 mm | −7% |
+| 코일 선경 $d_c$ | > 0.5 mm | **0.5 mm** | ✅ 스펙 준수 |
+| 외형 / VCM Ø | ≤ 200³ / ≤ 20 mm | 충족 | ✅ |
+| 전류밀도 $J$ | ≤ 10 A/mm² | 10.2 | 발열 한계 |
 
-\* 힘상수가 소거되는 물리 한계식상 $d_c>0.5$ mm 를 글자 그대로 지키면 행정·공진 동시충족 해가 **존재하지 않음**을 증명하고, 물리적 불가피성에 근거해 완화. (`notes/[5단계]` 참조)
+**전수감사로 두 모델 오류를 정정**하여 결론이 "불가 → 경계"로 바뀌었습니다: (i) 단순 보 강성식($24EI/L^3$)은 비관적 → **컴플라이언스 행렬법**으로 정정, (ii) **발열(전류밀도) 제약 누락** → 반영하니 최적 선경이 $d_c\approx0.5$ mm로 수렴, 즉 **과제 스펙 $d_c>0.5$ mm가 발열 한계와 물리적으로 일치**함을 규명. 본 스펙은 모순이 아니라 frontier에서 약 7% 바깥의 도전적 문제입니다.
 
-**최종 설계:** 재료 Al6061 · blade $t=0.43$ / $L=24.2$ / $b=8$ mm · VCM $r_m=6.5$ / $h_m=25$ / $h_{y1}=5.8$ / $t_g=2.5$ mm (Ø20)
+**권장 최종 설계:** DCP + **Al7075-T6** · $d_c=0.5$ mm(스펙 준수) · blade $L=19.6$ / $t=0.23$ / $b=5$ mm · $K_\text{eff}=2.0$ N/mm · VCM $r_m=7.4$ / $h_{y1}=4.0$ / $t_g=1.8$ mm (Ø20, $B_g=597$ mT, $K_f=1.04$ N/A) · 피로응력 binding.
 
 ---
 
@@ -32,19 +33,22 @@
 ```
 VCM/
 ├── matlab/      해석·최적화 MATLAB 스크립트
-│   ├── flexure_model.m      DCP 강성·공진·응력 모델
+│   ├── flexure_matrix_codesign.m  컴플라이언스 행렬법 유연기구 + 공동최적
+│   ├── codesign_mono.m      일괄(monolithic) 공동최적화
+│   ├── codesign_iterate.m   반복(block-coordinate) 공동최적 + 교차검증
+│   ├── codesign_audit.m     전수감사 (발열·전류밀도)
+│   ├── codesign_material.m  재료 8종 공동최적 랭킹
+│   ├── dcp_extend.m         DCP(이중복합) 확장
+│   ├── final_dcp_design.m   최종 설계점 (DCP+Al7075)
+│   ├── make_figures_v2.m    정정 분석 figure 생성
+│   ├── make_concept_fig.m   개념도(올바른 DCP 구조)
 │   ├── vcm_model.m          VCM 퍼미언스 자기회로 모델
-│   ├── opt_design.m         γ-최대화 최적화 (fmincon SQP, multi-start)
-│   ├── final_design.m       최종 설계점 산출
-│   ├── fea_frame_modal.m    보 요소 FEM 모달 해석
-│   ├── material_study.m     Al6061 / 스프링강 / BeCu 비교
-│   ├── make_figures.m       결과 그림 생성
-│   └── make_concept_fig.m   개념도 생성
+│   └── (구) flexure_model / opt_design / final_design …  초기(단순식) 모델
 ├── femm/        자기장 FEM (FEMM 4.2 + pyFEMM)
-│   ├── vcm_axi.lua          축대칭 VCM 자기 해석 스크립트
-│   ├── vcm_femm.py          pyFEMM 자동 스윕 (48점 그리드)
-│   ├── vcm_fluxplot.py      자속 분포 플롯
-│   └── bg_surrogate.py      B_g 2차 다항 대리모델 (R²=0.99)
+│   ├── vcm_femm_doe.py      N52 48점 DOE → B_g surrogate (R²=0.996)
+│   ├── vcm_femm_opt.py      형상 최적화 + 해석모델 검증
+│   ├── vcm_femm_halbach.py  Halbach/방사자석 B_g 배율 실측
+│   └── vcm_axi.lua          축대칭 VCM 자기 해석
 ├── simulink/    동특성·제어 모델
 │   ├── build_vcm_plant.m    Model 1: 개루프 플랜트
 │   ├── build_vcm_control.m  Model 2: PID 폐루프
@@ -66,20 +70,15 @@ VCM/
 
 ```matlab
 cd matlab
-flexure_model            % 유연기구 모델 검증
-vcm_model                % VCM 자기회로 모델
-material_study           % 재료 비교
-opt_design               % γ-최대화 최적화
-final_design             % 최종 설계점
-make_figures             % 결과 그림 일괄 생성
-
-cd ../simulink
-build_vcm_plant          % 개루프
-build_vcm_control        % PID 폐루프
-build_vcm_simscape       % Simscape 물리 네트워크
+flexure_matrix_codesign  % 행렬법 검증(6043Hz) + 공동최적
+codesign_audit           % 전수감사: 발열·전류밀도 (d_c=0.5=발열한계 규명)
+codesign_mono            % 일괄 공동최적화 (재료·힌지 트랙)
+dcp_extend               % 단일 vs DCP 비교
+final_dcp_design         % 최종 권장 설계 (DCP+Al7075, γ=0.93)
+make_figures_v2          % 정정 분석 figure 생성
 ```
 
-**FEMM** (4.2): `femm/vcm_axi.lua` 를 FEMM에서 실행하거나, pyFEMM 환경에서 `python femm/vcm_femm.py` 로 자동 스윕 → `bg_surrogate.py` 로 대리모델 적합.
+**FEMM** (4.2 + pyFEMM): `python femm/vcm_femm_doe.py` 로 N52 48점 DOE → B_g surrogate(R²=0.996) 적합. `vcm_femm_opt.py`로 형상 검증, `vcm_femm_halbach.py`로 B_g 배율 실측.
 
 **보고서:** `report/main_cvpr.tex` 를 XeLaTeX(+kotex)로 컴파일. `figure/` 의 그림을 참조합니다.
 
