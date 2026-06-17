@@ -55,7 +55,6 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-/* 한글 본문은 Noto Sans KR로 자연스럽게 */
 p, li, td, th, .toc-title, .toc-sub, .kpi .l, .problem-sub { font-family: var(--font-kr); }
 
 body::before {
@@ -68,10 +67,8 @@ body::before {
   z-index: 0;
 }
 
-/* ============== LAYOUT ============== */
 .layout { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
-/* ============== SIDEBAR ============== */
 .sidebar {
   width: var(--side-w);
   flex-shrink: 0;
@@ -172,7 +169,6 @@ body::before {
   line-height: 1.8;
 }
 
-/* mobile sidebar */
 .side-toggle {
   display: none;
   position: fixed;
@@ -199,11 +195,9 @@ body::before {
   .main { padding-top: 60px !important; }
 }
 
-/* ============== MAIN ============== */
 .main { flex: 1; min-width: 0; padding: 64px 56px 120px; max-width: 940px; margin: 0 auto; }
 @media (max-width: 1100px) { .main { padding: 64px 32px 120px; } }
 
-/* hero */
 .hero { margin-bottom: 28px; padding-bottom: 36px; border-bottom: 1px solid var(--rule); }
 .hero .eyebrow {
   font-family: var(--font-mono);
@@ -223,7 +217,6 @@ body::before {
 }
 .hero .byline b { color: var(--ink); font-weight: 500; }
 
-/* KPI callouts */
 .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 32px 0 8px; }
 @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2,1fr); } }
 .kpi {
@@ -239,7 +232,6 @@ body::before {
   text-transform: uppercase; color: var(--ink-muted); margin-top: 8px; line-height: 1.5;
 }
 
-/* section */
 .problem-section { scroll-margin-top: 24px; }
 .problem-section + .problem-section { margin-top: 88px; }
 .problem-head { margin-bottom: 8px; }
@@ -255,7 +247,6 @@ body::before {
 .problem-title em { font-style: italic; color: var(--accent); }
 .problem-sub { color: var(--ink-soft); font-size: 16px; margin: 0 0 26px; }
 
-/* step */
 .step {
   position: relative; padding: 4px 0 4px 28px; margin: 30px 0;
   border-left: 2px solid var(--rule); transition: border-color .2s ease;
@@ -273,13 +264,11 @@ body::before {
 .step .hint { color: var(--ink-muted); font-style: italic; font-size: 15px; font-family: var(--font-serif); }
 em.term { font-style: italic; color: var(--accent); }
 
-/* equation banner */
 .eq-banner {
   background: var(--bg-soft); border: 1px solid var(--rule-soft); border-radius: 2px;
   padding: 16px 22px; margin: 16px 0; text-align: center; font-size: 18px;
 }
 
-/* figure */
 figure.fig {
   margin: 28px 0; background: var(--bg-card); border: 1px solid var(--rule);
   border-radius: 2px; padding: 18px 18px 14px; box-shadow: var(--shadow);
@@ -295,7 +284,6 @@ figure.fig figcaption b { color: var(--accent); font-weight: 500; }
 .fig-row figure.fig { margin: 28px 0 0; }
 @media (max-width: 740px) { .fig-row { grid-template-columns: 1fr; } }
 
-/* tables */
 table.spec { width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 15px; }
 table.spec caption {
   font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
@@ -311,7 +299,6 @@ table.spec td.num { font-family: var(--font-mono); font-size: 14px; }
 table.spec td.pass { color: var(--accent); font-weight: 500; }
 table.spec td.fail { color: var(--accent-2); font-weight: 500; }
 
-/* final answer / callout */
 .final-answer {
   margin: 40px 0 0; padding: 24px 30px; background: var(--bg-card);
   border: 1px solid var(--rule); border-top: 3px solid var(--accent-2);
@@ -324,7 +311,6 @@ table.spec td.fail { color: var(--accent-2); font-weight: 500; }
 .final-answer .ans { font-family: var(--font-kr); font-size: 16px; color: var(--ink); }
 .final-answer .ans b { color: var(--accent); }
 
-/* two-card grid */
 .cards2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
 @media (max-width: 740px) { .cards2 { grid-template-columns: 1fr; } }
 .minicard {
@@ -336,7 +322,6 @@ table.spec td.fail { color: var(--accent-2); font-weight: 500; }
 .minicard p { font-size: 14.5px; margin: 8px 0; }
 .minicard .mono { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); }
 
-/* divider */
 .problem-divider {
   margin: 80px 0 0; text-align: center; font-family: var(--font-mono);
   font-size: 10px; letter-spacing: .35em; color: var(--ink-muted);
@@ -365,14 +350,14 @@ mjx-container[display="true"] { margin: 12px 0 !important; }
     <div class="contents-label">Contents</div>
 
     <ul class="toc-list">
-      <li class="toc-item" data-target="s01"><a href="#s01"><span class="toc-num">01</span><span><div class="toc-title">개요 &amp; 요구사양</div><div class="toc-sub">목표 KPI와 설계 변수</div></span></a></li>
-      <li class="toc-item" data-target="s02"><a href="#s02"><span class="toc-num">02</span><span><div class="toc-title">개념설계 (DCP)</div><div class="toc-sub">이중 복합 평행판 유연기구</div></span></a></li>
-      <li class="toc-item" data-target="s03"><a href="#s03"><span class="toc-num">03</span><span><div class="toc-title">해석 모델</div><div class="toc-sub">강성·공진 / VCM 자기회로</div></span></a></li>
-      <li class="toc-item" data-target="s04"><a href="#s04"><span class="toc-num">04</span><span><div class="toc-title">근본적 물리 한계</div><div class="toc-sub">와이어경 vs 행정·공진</div></span></a></li>
-      <li class="toc-item" data-target="s05"><a href="#s05"><span class="toc-num">05</span><span><div class="toc-title">최적화 &amp; 재료비교</div><div class="toc-sub">γ-최대화 · Al/강/BeCu</div></span></a></li>
-      <li class="toc-item" data-target="s06"><a href="#s06"><span class="toc-num">06</span><span><div class="toc-title">FEA 검증</div><div class="toc-sub">모달 · FEMM · 대리모델</div></span></a></li>
-      <li class="toc-item" data-target="s07"><a href="#s07"><span class="toc-num">07</span><span><div class="toc-title">동특성 &amp; 제어</div><div class="toc-sub">Simulink 3종 모델</div></span></a></li>
-      <li class="toc-item" data-target="s08"><a href="#s08"><span class="toc-num">08</span><span><div class="toc-title">최종 설계</div><div class="toc-sub">제원 · KPI 충족 요약</div></span></a></li>
+      <li class="toc-item" data-target="s01"><a href="#s01"><span class="toc-num">01</span><span><div class="toc-title">개요 &amp; 요구사양</div><div class="toc-sub">목표 KPI · 핵심 상충</div></span></a></li>
+      <li class="toc-item" data-target="s02"><a href="#s02"><span class="toc-num">02</span><span><div class="toc-title">개념설계 (DCP)</div><div class="toc-sub">올바른 이중복합 구조</div></span></a></li>
+      <li class="toc-item" data-target="s03"><a href="#s03"><span class="toc-num">03</span><span><div class="toc-title">해석 모델</div><div class="toc-sub">행렬법 · FEMM · 발열</div></span></a></li>
+      <li class="toc-item" data-target="s04"><a href="#s04"><span class="toc-num">04</span><span><div class="toc-title">전수감사 &amp; 정정</div><div class="toc-sub">단순식·발열 두 오류</div></span></a></li>
+      <li class="toc-item" data-target="s05"><a href="#s05"><span class="toc-num">05</span><span><div class="toc-title">공동최적화</div><div class="toc-sub">flexure↔VCM · 재료 8종</div></span></a></li>
+      <li class="toc-item" data-target="s06"><a href="#s06"><span class="toc-num">06</span><span><div class="toc-title">모델 검증</div><div class="toc-sub">행렬법 · FEMM N52</div></span></a></li>
+      <li class="toc-item" data-target="s07"><a href="#s07"><span class="toc-num">07</span><span><div class="toc-title">동특성 &amp; 제어</div><div class="toc-sub">Simulink</div></span></a></li>
+      <li class="toc-item" data-target="s08"><a href="#s08"><span class="toc-num">08</span><span><div class="toc-title">최종 설계</div><div class="toc-sub">DCP+Al7075 · 경계</div></span></a></li>
     </ul>
 
     <div class="side-foot">
@@ -385,45 +370,43 @@ mjx-container[display="true"] { margin: 12px 0 !important; }
   <!-- ============ MAIN ============ -->
   <main class="main">
 
-    <!-- ===== HERO ===== -->
     <header class="hero">
       <div class="eyebrow">Precision System Design · Term Project</div>
       <h1>보이스코일로 구동하는<br><em>이중 복합 평행판</em> 유연 스테이지</h1>
-      <p class="lead">VCM(Voice Coil Motor)으로 직접 구동되는 1자유도 직선 정밀 스테이지를, 개념설계 → 해석모델 → 최적화 → FEA 검증 → 동특성/제어의 7단계 흐름으로 설계하고 검증한 기록입니다. 해석값은 자기장 FEM(FEMM)·구조 모달 FEM·대리모델의 3중 검증으로 보정했습니다.</p>
+      <p class="lead">VCM 구동 1자유도 직선 정밀 스테이지를 <em class="term">유연기구–VCM 공동최적화</em>로 설계하고, 모든 수식과 누락 물리를 <em class="term">전수감사</em>하여 검증한 기록입니다. 그 과정에서 두 모델 오류(단순 강성식·발열 누락)를 발견·정정하였고, 발열까지 정직하게 반영했을 때 본 스펙이 물리적 실현가능성 <b>경계</b>에 위치함을 정량적으로 규명했습니다.</p>
       <p class="byline"><b>소상연</b> · 202624279 · 아주대학교 D.N.A.플러스융합학과 · 초정밀시스템설계 프로젝트</p>
     </header>
 
-    <!-- ===== KPI snapshot ===== -->
     <div class="kpis">
-      <div class="kpi"><div class="v">105.3<span class="u">Hz</span></div><div class="l">1차 공진 f₁ · 목표 &gt;100</div></div>
-      <div class="kpi"><div class="v">1.05<span class="u">mm</span></div><div class="l">행정 @ 2A · 목표 &gt;1</div></div>
-      <div class="kpi alt"><div class="v">Al<span class="u">6061</span></div><div class="l">선정 재료 · γ 최대</div></div>
-      <div class="kpi alt"><div class="v">Ø20<span class="u">mm</span></div><div class="l">원통대칭 VCM · 2A</div></div>
+      <div class="kpi"><div class="v">0.93<span class="u">γ</span></div><div class="l">충족률 · 경계 (목표 1.0)</div></div>
+      <div class="kpi"><div class="v">0.93<span class="u">mm</span></div><div class="l">행정 @ 2A · 목표 &gt;1</div></div>
+      <div class="kpi"><div class="v">92.6<span class="u">Hz</span></div><div class="l">1차 공진 · 목표 &gt;100</div></div>
+      <div class="kpi alt"><div class="v">0.5<span class="u">mm</span></div><div class="l">코일 선경 d_c · 스펙 준수</div></div>
     </div>
 
     <!-- ========== S01 ========== -->
     <section class="problem-section" id="s01">
       <div class="problem-head"><span class="problem-num">Section 01 · Requirements</span></div>
       <h2 class="problem-title">개요와 <em>요구사양</em></h2>
-      <p class="problem-sub">설계 목표는 "작은 부피 안에서, 큰 행정과 높은 공진을 동시에" 달성하는 것 — 이 둘은 본질적으로 상충한다.</p>
+      <p class="problem-sub">"작은 부피에서 큰 행정과 높은 공진을 동시에" — 게다가 굵은 코일선까지. 이 제약들이 어떻게 맞물리는지를 정직하게 따진다.</p>
 
       <table class="spec">
         <caption>Target KPI</caption>
         <thead><tr><th>항목</th><th>기호</th><th>요구 조건</th><th>비고</th></tr></thead>
         <tbody>
-          <tr><td>외형 크기</td><td>—</td><td class="num">≤ 200 × 200 × 20 mm</td><td>설치 envelope</td></tr>
+          <tr><td>외형 크기</td><td>—</td><td class="num">≤ 200 × 200 × 20 mm</td><td>구동기 포함</td></tr>
           <tr><td>행정(stroke)</td><td>$x$</td><td class="num">&gt; 1 mm</td><td>편측 기준</td></tr>
-          <tr><td>1차 공진</td><td>$f_1$</td><td class="num">&gt; 100 Hz</td><td>대역폭 확보</td></tr>
+          <tr><td>1차 공진</td><td>$f_1$</td><td class="num">&gt; 100 Hz</td><td>대역폭</td></tr>
           <tr><td>구동 전류</td><td>$I$</td><td class="num">= 2 A</td><td>고정</td></tr>
-          <tr><td>코일 와이어경</td><td>$d_c$</td><td class="num">&gt; 0.5 mm</td><td>제작성 제약</td></tr>
+          <tr><td>코일 선경</td><td>$d_c$</td><td class="num">&gt; 0.5 mm</td><td>제작성(=발열 한계, §4)</td></tr>
         </tbody>
       </table>
 
-      <p>행정과 공진은 유연기구 강성 $k_x$를 통해 정면으로 충돌한다. 행정을 키우려면 $k_x$를 낮춰야 하지만, 공진 $f_1\propto\sqrt{k_x/m}$ 은 $k_x$를 높여야 한다. 본 프로젝트의 핵심은 이 상충을 정량화하고, VCM 구동력으로 메울 수 있는 영역을 찾는 데 있다.</p>
+      <p>행정과 공진은 강성 $k$를 두고 정면충돌하고($x\propto 1/k$, $f_1\propto\sqrt{k}$), 코일선 굵기 $d_c$는 추력과 발열을 동시에 좌우한다. 이 보고서의 핵심은 단순 모델로 성급히 결론내지 않고, 모든 수식과 누락 물리를 전수감사해 정정한 과정 자체다.</p>
 
       <figure class="fig">
-        <img src="figure/fig_architecture_final.png" alt="시스템 아키텍처 개요">
-        <figcaption><b>Fig 1.</b> 전체 설계 파이프라인 — 요구사양에서 출발해 유연기구·VCM 해석모델을 세우고, 물리한계 분석으로 가능영역을 좁힌 뒤, γ-최대화 최적화와 3중 FEA 검증을 거쳐 최종 제원을 확정한다.</figcaption>
+        <img src="figure/fig_architecture_final.png" alt="설계 방법론 아키텍처">
+        <figcaption><b>Fig 1.</b> 방법론 — 컴플라이언스 행렬법 유연기구 + FEMM-검증 VCM surrogate → 공동최적화 → 발열·피로 제약 하 실현가능성 판정.</figcaption>
       </figure>
     </section>
 
@@ -431,240 +414,175 @@ mjx-container[display="true"] { margin: 12px 0 !important; }
     <section class="problem-section" id="s02">
       <div class="problem-head"><span class="problem-num">Section 02 · Concept</span></div>
       <h2 class="problem-title">개념설계 · <em>이중 복합 평행판</em></h2>
-      <p class="problem-sub">Double Compound Parallelogram (DCP) — 기생 변위(parasitic error)를 상쇄해 순수 직선운동을 만드는 유연기구.</p>
+      <p class="problem-sub">중앙 플랫폼 + 전폭 상하 바 + 양옆 4 지점핀 + 16 힌지 — 강의/검증된 올바른 DCP 구조.</p>
 
-      <p>단일 평행판은 큰 변위에서 호(arc) 형태로 휘어 횡방향 기생 변위가 생긴다. <em class="term">복합(compound)</em> 구조는 중간 스테이지를 두어 이 오차를 1차로 상쇄하고, 이를 한 번 더 대칭으로 겹친 <em class="term">DCP</em> 구조는 잔류 오차까지 억제해 수 mm 행정에서도 직진성을 유지한다.</p>
+      <p>단일 평행판은 큰 변위에서 호 형태로 휘어 수직 기생변위 $\delta_y\approx x^2/2L$가 생긴다. <em class="term">복합(compound)</em>은 중간 stage로 이를 1차 상쇄(직선화)하고, <em class="term">이중복합(DCP)</em>은 대칭 한 쌍으로 잔류오차·기울어짐까지 억제한다. DCP 정강성은 직렬(복합)×병렬(이중)이 상쇄돼 단일과 동급이지만, 각 단이 행정의 절반만 부담해 <b>응력이 절반</b>이 된다.</p>
 
       <figure class="fig narrow">
-        <img src="figure/fig0_concept.png" alt="DCP 유연기구 개념도">
-        <figcaption><b>Fig 2.</b> DCP 유연 스테이지 개념도 — 고정부, 중간 스테이지, 가동 스테이지가 8개의 blade로 연결된다. VCM 코일은 가동부에, 자석은 고정부에 위치한다.</figcaption>
+        <img src="figure/fig0_concept.png" alt="올바른 DCP 구조 개념도">
+        <figcaption><b>Fig 2.</b> 올바른 DCP 구조 — 중앙 플랫폼 $M$, 전폭 상/하 중간바($m$), 양옆 4개 지점핀(고정), 16개 leaf 힌지. 우측에 moving-coil VCM(코일 가동, 자석 고정).</figcaption>
       </figure>
-
-      <div class="step">
-        <span class="step-label">핵심</span>
-        <span class="step-title">왜 DCP인가</span>
-        <ul>
-          <li><b>직진성</b> — 기생 변위가 행정 제곱에 비례하던 것을, 대칭 상쇄로 고차항까지 억제.</li>
-          <li><b>선형 강성</b> — 작동 범위에서 $k_x$가 거의 일정 → 제어 설계가 단순해진다.</li>
-          <li><b>무마찰·무백래시</b> — 탄성 변형만 사용 → 나노급 분해능과 무한 수명.</li>
-        </ul>
-      </div>
     </section>
 
     <!-- ========== S03 ========== -->
     <section class="problem-section" id="s03">
-      <div class="problem-head"><span class="problem-num">Section 03 · Analytical Models</span></div>
-      <h2 class="problem-title">해석 모델 · <em>강성·공진</em> 과 <em>VCM</em></h2>
-      <p class="problem-sub">두 개의 물리를 한 줄로 묶는다 — 변형(유연기구)과 자기장(VCM).</p>
-
-      <div class="part-header"></div>
+      <div class="problem-head"><span class="problem-num">Section 03 · Models</span></div>
+      <h2 class="problem-title">해석 모델 · <em>행렬법 · FEMM · 발열</em></h2>
+      <p class="problem-sub">유연기구는 컴플라이언스 행렬법으로, VCM은 FEMM 검증 surrogate로, 그리고 발열까지 결합한다.</p>
 
       <div class="step">
-        <span class="step-label">Model A</span>
-        <span class="step-title">유연기구 강성과 공진</span>
-        <p>각 blade를 고정-가이드 보로 보면, 한 변형 요소의 강성은 $k_1 = 12EI/L^3$, $I = b\,t^3/12$ 이다. DCP는 병렬 2조 구조이므로 축방향 강성은</p>
-        $$ k_x \;=\; \frac{24\,E\,I}{L^3} \;=\; \frac{2\,E\,b\,t^3}{L^3}. $$
-        <p>유효 질량 $m_{\text{eff}}$ 은 가동 스테이지·코일에 중간 스테이지와 blade의 분담 질량을 더해</p>
-        $$ m_{\text{eff}} = m_{\text{stage}} + m_{\text{coil}} + \tfrac14 m_{\text{inter}} + \tfrac13 m_{\text{blade}}, $$
-        <p>1차 공진과 최대 응력은</p>
-        $$ f_1 = \frac{1}{2\pi}\sqrt{\frac{k_x}{m_{\text{eff}}}}, \qquad \sigma_{\max} = \frac{3Et\,(x/2)}{L^2}. $$
-        <p class="hint">$\sigma_{\max}$ 은 항복강도 대비 안전율로 행정 상한을 제한한다 — 재료 비교의 핵심 변수.</p>
+        <span class="step-label">유연기구</span>
+        <span class="step-title">컴플라이언스 행렬법 (강의 정석)</span>
+        <p>각 힌지의 국부 컴플라이언스 $C_h$를 연결벡터 변환 $T$·회전 $R$로 전역으로 옮겨 강성을 합성한다. 운동방향 강성 $K_{\text{eff}}=K_{yy}$, 공진은 질량행렬 고유치로 구한다:</p>
+        $$ K=\sum_i\big(T_iR_iC_hR_i^TT_i^T\big)^{-1},\qquad f_1=\frac{1}{2\pi}\sqrt{\lambda_1(K,M)} $$
+        <p class="hint">초기에 쓴 단순 보 강성식 $k_x=24EI/L^3$은 이 행렬법 대비 강성을 비관적으로 추정한다 (§4에서 정정).</p>
       </div>
 
       <div class="step">
-        <span class="step-label">Model B</span>
-        <span class="step-title">VCM 자기회로 — 퍼미언스(permeance)법</span>
-        <p>원통대칭 VCM의 자기회로를 자석·요크·공극의 퍼미언스 $P$ 로 분해한다. 영구자석 자속 $\Phi_r$ 가 누설 $P_l$ 과 주경로 $P_{\text{main}}$ 로 나뉘어 공극 자속이 결정된다.</p>
-        $$ \Phi_g = \Phi_r\,\frac{P_{\text{main}}}{P_m + P_l + P_{\text{main}}}, \qquad B_g = \frac{\Phi_g}{A_g}, $$
-        <p>공극 면적은 $A_g = 2\pi\,(r_m + t_g/2)\,h_{y1}$. 로런츠 힘은 대칭계수 $n_{\text{sym}}=2$ 를 포함해</p>
-        $$ \boxed{\;F = n_{\text{eff}}\,B_g\,L_m\,I\;} $$
-        <p class="hint">초기 해석식은 $B_g$ 를 과대평가(≈450 mT)했고, 뒤의 FEMM 검증에서 291 mT 로 보정된다 (Section 06).</p>
+        <span class="step-label">VCM</span>
+        <span class="step-title">Permeance + FEMM N52 surrogate</span>
+        <p>퍼미언스 자기회로로 공극 자속 $B_g$·추력 $F=n_{\text{eff}}B_gL_mI$를 얻되, 해석모델이 극단 형상에서 $B_g$를 비현실적으로 과대평가하므로 <em class="term">FEMM 축대칭 48점 해석</em>으로 N52 자석의 $B_g(r_m,h_{y1},t_g)$ 2차 다항 surrogate를 적합($R^2=0.996$)해 대체한다.</p>
+      </div>
+
+      <div class="step">
+        <span class="step-label">발열</span>
+        <span class="step-title">전류밀도 결합 (핵심 정정)</span>
+        <p>고정전류 $I=2$A에서 코일 전류밀도 $J=I/(\tfrac\pi4 d_c^2)$는 가는 선일수록 급증한다. 연속운전 한계 $J\le10$ A/mm²를 제약으로 추가한다 — 이 항이 누락되면 가는 선이 부당하게 유리해진다(§4).</p>
       </div>
     </section>
 
     <!-- ========== S04 ========== -->
     <section class="problem-section" id="s04">
-      <div class="problem-head"><span class="problem-num">Section 04 · Fundamental Limit</span></div>
-      <h2 class="problem-title">근본적 <em>물리 한계</em></h2>
-      <p class="problem-sub">"와이어를 굵게 하라"는 제약과 "행정·공진을 키워라"는 목표는 동시에 만족될 수 없다 — 식으로 증명된다.</p>
+      <div class="problem-head"><span class="problem-num">Section 04 · Audit</span></div>
+      <h2 class="problem-title">전수감사와 <em>두 오류의 정정</em></h2>
+      <p class="problem-sub">결론이 자꾸 같은 곳으로 가자, 모든 수식을 전수조사했다. 두 개의 결정적 오류가 나왔다.</p>
 
       <div class="step">
-        <span class="step-label">유도</span>
-        <span class="step-title">힘상수가 소거되는 부등식</span>
-        <p>정적 행정 $x = F/k_x = (K_f I)/k_x$ 와 공진 $k_x = m(2\pi f_1)^2$ 을 결합하면, 요구 행정·공진을 동시에 만족하기 위한 조건은 코일 충전과 자속밀도의 관계로 정리된다:</p>
-        $$ \rho_{cu}\,\frac{\pi}{4}\,\frac{d_c^{2}}{B_g} \;\le\; \frac{I_{\max}}{x_{\text{req}}\,(2\pi f_{\text{req}})^{2}}. $$
-        <p>여기서 힘상수 $K_f$ 가 양변에서 <b>소거</b>된다 — 즉 "코일을 더 감는다"로는 한계를 못 넘는다. 좌변은 와이어가 굵을수록($d_c\!\uparrow$) 커지므로, $d_c>0.5$ mm 를 강제하면 행정과 공진을 동시에 만족하는 해가 사라진다.</p>
+        <span class="step-label">정정 ①</span>
+        <span class="step-title">단순 강성식이 비관적이었다</span>
+        <p>동일 조건($d_c=0.5$·발열·피로)에서 단순식 $24EI/L^3$은 $\gamma=0.87$로 <b>불가</b>라 했지만, 검증된 행렬법은 $\gamma=0.95\sim1.02$로 <b>경계</b>로 끌어올린다. 초기의 "$d_c>0.5$ 불가" 결론은 상당 부분 잘못된 강성식 탓이었다.</p>
       </div>
 
       <figure class="fig narrow">
-        <img src="figure/fig2_dc_sensitivity.png" alt="와이어경에 따른 가능영역">
-        <figcaption><b>Fig 3.</b> 와이어경 $d_c$ 민감도 — $d_c \approx 0.32$ mm 부근이 임계점. 그 이상에서는 행정·공진 동시충족 영역이 닫힌다. 제약을 그대로 적용하면 KPI 동시충족이 불가능함을 보여준다.</figcaption>
+        <img src="figure/fig_v2_method.png" alt="단순식 vs 행렬법 정정">
+        <figcaption><b>Fig 3.</b> 유연기구 수식 정정 — 단순식(회색)은 비관적, 검증된 행렬법(파랑/녹색)이 정확.</figcaption>
+      </figure>
+
+      <div class="step">
+        <span class="step-label">정정 ②</span>
+        <span class="step-title">발열(전류밀도)이 누락돼 있었다</span>
+        <p>발열을 무시하니 가는 선이 부당하게 유리했다. 권장 후보였던 $d_c=0.3$mm는 실제 $J=28$ A/mm²(연속한계의 약 3배)로 <b>열적으로 불가</b>하다. $J\le10$ 제약 하에 $d_c$를 자유화하면 최적 선경이 $d_c=0.505$mm로 수렴 — 즉 <b>$d_c>0.5$ 스펙은 발열 한계의 proxy</b>다.</p>
+      </div>
+
+      <figure class="fig narrow">
+        <img src="figure/fig_v2_thermal.png" alt="발열 한계가 d_c 스펙을 강제">
+        <figcaption><b>Fig 4.</b> 발열($J$) 한계가 $d_c>0.5$ 스펙을 강제. $J$ 무시 시 $d_c\to0.2$mm(비현실), $J\le10$이면 $d_c\approx0.5$.</figcaption>
       </figure>
 
       <div class="final-answer">
-        <div class="tag">설계 판단</div>
-        <div class="ans">제작성 제약 $d_c>0.5$ mm 를 글자 그대로 지키면 해가 없다. 따라서 <b>$d_c=0.3$ mm</b> 를 채택하고, 이 완화가 물리적으로 불가피함을 한계식으로 근거화했다. 이것이 본 설계의 가장 중요한 의사결정이다.</div>
+        <div class="tag">감사 결론</div>
+        <div class="ans">두 오류를 정정하니 역설적으로 <b>교수님 스펙이 물리적으로 일관됨</b>이 드러났다. $d_c{=}0.5,I{=}2$A는 $J{=}10.2$ A/mm²로 두 스펙이 열적으로 정확히 맞물린다. 스펙은 모순이 아니라 발열 한계 위의 도전적 문제다.</div>
       </div>
     </section>
 
     <!-- ========== S05 ========== -->
     <section class="problem-section" id="s05">
-      <div class="problem-head"><span class="problem-num">Section 05 · Optimization &amp; Materials</span></div>
-      <h2 class="problem-title"><em>γ-최대화</em> 최적화와 재료 비교</h2>
-      <p class="problem-sub">두 KPI를 하나의 여유율 γ로 묶어 동시에 끌어올린다.</p>
+      <div class="problem-head"><span class="problem-num">Section 05 · Co-design</span></div>
+      <h2 class="problem-title"><em>공동최적화</em> · flexure ↔ VCM</h2>
+      <p class="problem-sub">두 학문이 코일질량·강성·힘상수로 얽혀 있어, 따로 풀면 진짜 최적이 안 나온다.</p>
 
       <div class="step">
         <span class="step-label">정식화</span>
-        <span class="step-title">에피그래프(epigraph) 변환</span>
-        <p>행정과 공진을 각각의 목표로 정규화한 공통 여유율 $\gamma$ 를 최대화한다:</p>
-        $$ \max_{\;t,\,L,\,b,\,\dots}\;\gamma \quad \text{s.t.}\quad x \ge \gamma\cdot 1\,\text{mm},\;\; f_1 \ge \gamma\cdot 100\,\text{Hz},\;\; \sigma_{\max}\le \sigma_y/SF,\;\dots $$
-        <p>$\gamma>1$ 이면 두 KPI를 동시에 여유 있게 만족. <code>fmincon</code> SQP에 다중 시작점(multi-start)을 적용해 국소해를 회피했다.</p>
+        <span class="step-title">공통 여유율 γ 최대화</span>
+        <p>VCM의 코일질량($\to$공진)·힘상수($\to$변위)와 유연기구의 강성·질량이 결합된다. epigraph로 $\max\gamma$ s.t. $x=K_fI/K_{\text{eff}}\ge\gamma x_{\text{req}}$, $f_1\ge\gamma f_{\text{req}}$, 발열·피로·포화·크기 제약. <b>일괄(monolithic)</b>을 기준으로 <b>반복(block-coordinate)</b>과 교차검증했다(반복법은 multi-start 필수 — 초기값에 따라 0.975 vs 1.00).</p>
+        <p class="hint">반전: 최적해는 "강한 VCM"이 아니라 "부드러운 유연기구 + 가볍고 약한 VCM"이었다 — 두 학문을 함께 움직여야 보이는 해.</p>
       </div>
 
       <div class="step">
         <span class="step-label">재료</span>
-        <span class="step-title">Al6061 vs 스프링강 vs BeCu</span>
-        <p>유연기구 성능지수는 항복변형률 $\sigma_y/E$ (행정 여유)과 비강성 $E/\rho$ (공진)으로 갈린다. 세 재료를 같은 최적화 루프에 넣어 달성 가능한 $\gamma$ 를 비교했다.</p>
+        <span class="step-title">8종 공동최적 랭킹</span>
+        <p>재료를 최적화 변수로 보고 8종을 공동최적화했다. 높은 항복변형 $S_y/E$(행정)와 낮은 밀도(공진)를 동시에 원하므로 Mg·Al7075가 상위. 실용성(가공·피로·취급)까지 고려해 <b>Al7075-T6</b>를 권장한다.</p>
       </div>
 
-      <div class="fig-row">
-        <figure class="fig">
-          <img src="figure/fig1_material_gamma.png" alt="재료별 달성 가능 γ">
-          <figcaption><b>Fig 4.</b> 재료별 최대 $\gamma$. <b>Al6061</b>이 부피·질량 제약 안에서 가장 높은 여유율을 달성.</figcaption>
-        </figure>
-        <figure class="fig">
-          <img src="figure/fig5_tradeoff.png" alt="행정-공진 트레이드오프">
-          <figcaption><b>Fig 5.</b> 행정–공진 트레이드오프 곡선. 최적해는 두 KPI 선을 동시에 넘는 가능영역의 경계에 위치.</figcaption>
-        </figure>
-      </div>
-
-      <div class="final-answer">
-        <div class="tag">선정</div>
-        <div class="ans">재료 <b>Al6061</b> · 설계변수 $t=0.43$, $L=24.2$, $b=8$ mm. 알루미늄의 높은 항복변형률과 낮은 밀도가 "큰 행정 + 높은 공진"의 동시 달성에 가장 유리했다.</div>
-      </div>
+      <figure class="fig narrow">
+        <img src="figure/fig_v2_material.png" alt="재료 공동최적 랭킹">
+        <figcaption><b>Fig 5.</b> 재료 8종 공동최적 랭킹 (DCP, $d_c=0.5$, 발열·피로 포함).</figcaption>
+      </figure>
     </section>
 
     <!-- ========== S06 ========== -->
     <section class="problem-section" id="s06">
-      <div class="problem-head"><span class="problem-num">Section 06 · FEA Verification</span></div>
-      <h2 class="problem-title">FEA <em>3중 검증</em></h2>
-      <p class="problem-sub">상용 FEA 없이 — MATLAB 보 FEM(모달) + 무료 FEMM(자기장) + 대리모델로 해석값을 보정.</p>
+      <div class="problem-head"><span class="problem-num">Section 06 · Verification</span></div>
+      <h2 class="problem-title">모델 <em>검증</em></h2>
+      <p class="problem-sub">두 핵심 모델을 독립 기준으로 검증 — 행렬법과 FEMM.</p>
 
       <div class="cards2">
         <div class="minicard">
-          <h4>① 구조 모달 (MATLAB)</h4>
-          <p>보 요소 FEM으로 1차 모드 형상과 공진을 계산. 해석식 대비 <span class="mono">−2.8%</span> — 해석 강성모델이 충분히 정확함을 확인.</p>
+          <h4>① 유연기구 행렬법</h4>
+          <p>4-힌지 기준예제를 <span class="mono">정확히 재현</span>: 변위 16.69μm@10N, 1차 공진 6043Hz, 가이드비 Kxx/Kyy=178. 행렬법 구현의 정확성 확인.</p>
         </div>
         <div class="minicard alt">
-          <h4>② 자기장 (FEMM)</h4>
-          <p>축대칭 자기 FEM으로 공극 자속밀도 직접 측정: <span class="mono">B_g = 291 mT</span>. 해석식의 과대평가(≈450 mT)를 실측으로 교정.</p>
+          <h4>② 자기 FEA (FEMM)</h4>
+          <p>해석모델은 자유 최적화 시 <span class="mono">B_g=2.0T</span>(비현실)를 주지만, FEMM은 기준형상 <span class="mono">366mT</span>(N52). surrogate $R^2=0.996$로 대체 정당화.</p>
         </div>
       </div>
 
       <div class="fig-row">
         <figure class="fig">
           <img src="figure/fig7_fea_modeshape.png" alt="1차 모드 형상">
-          <figcaption><b>Fig 6.</b> 구조 모달 해석 — 1차 모드는 목표한 X축 병진. 해석 $f_1$ 대비 −2.8%.</figcaption>
+          <figcaption><b>Fig 6.</b> 1차 모드 — blade 변형을 통한 plate 병진(예시).</figcaption>
         </figure>
         <figure class="fig">
           <img src="figure/fig8_femm_flux.png" alt="FEMM 자속 분포">
-          <figcaption><b>Fig 7.</b> FEMM 축대칭 자속 분포 — 공극에 자속을 집중시키는 요크 형상. $B_g$ 직접 측정.</figcaption>
+          <figcaption><b>Fig 7.</b> FEMM 축대칭 자속 분포 — 공극에 자속 집중.</figcaption>
         </figure>
       </div>
-
-      <div class="step">
-        <span class="step-label">③ 대리모델</span>
-        <span class="step-title">FEA-정보 기반 다항 대리모델</span>
-        <p>pyFEMM으로 $(r_m, h_{y1}, t_g)$ 48점 그리드를 자동 스윕해 2차 다항 대리모델을 적합($R^2=0.99$). 이 식을 최적화 루프에 직접 꽂아 "FEM-검증된 $B_g$"로 설계를 다시 수렴시켰다 — 자속밀도 오차를 160 → 12 mT 로 축소.</p>
-        $$ B_g(r_m, h_{y1}, t_g) \approx \text{2nd-order polynomial},\qquad R^2 = 0.99. $$
-      </div>
-
-      <figure class="fig narrow">
-        <img src="figure/fig3_bg_parity.png" alt="대리모델 패리티 플롯">
-        <figcaption><b>Fig 8.</b> 대리모델 패리티 — 예측 $B_g$ vs FEMM 실측이 대각선에 밀착. 최적화에 안심하고 사용 가능한 정확도.</figcaption>
-      </figure>
     </section>
 
     <!-- ========== S07 ========== -->
     <section class="problem-section" id="s07">
-      <div class="problem-head"><span class="problem-num">Section 07 · Dynamics &amp; Control</span></div>
-      <h2 class="problem-title">동특성과 <em>제어</em> · Simulink 3종</h2>
-      <p class="problem-sub">전기 + 전자기 + 기계를 하나의 모델로 — 개루프 플랜트, PID 폐루프, Simscape 물리 네트워크.</p>
+      <div class="problem-head"><span class="problem-num">Section 07 · Dynamics</span></div>
+      <h2 class="problem-title">동특성과 <em>제어</em></h2>
+      <p class="problem-sub">전기+전자기+기계 결합 플랜트를 Simulink로 구성하고 PID·Simscape로 검증.</p>
 
-      <div class="step">
-        <span class="step-label">플랜트</span>
-        <span class="step-title">전압→변위 전달함수</span>
-        <p>전기(저항 $R$, 인덕턴스 $L$, 역기전력)·전자기($F=K_f I$)·기계($m\ddot x + c\dot x + kx = F$)를 결합하면</p>
-        $$ G(s) = \frac{X(s)}{V(s)} = \frac{K_f}{\,(ms^2+cs+k)(Ls+R)+K_f^{2}\,s\,}. $$
-        <p>설계값: $m=0.0147$ kg, $k=6441$ N/m, $K_f=3.392$ N/A, $R=2.58\,\Omega$, $L=1.5$ mH, $\zeta=0.05$. 역기전력 항 $K_f^2/R \approx 4.5$ 이 추가 감쇠로 작용한다.</p>
-      </div>
+      <p>권장 설계 파라미터($m_{\text{eff}}\approx7.8$g, $K_{\text{eff}}=2.0$kN/m, $K_f=1.04$N/A)로 전달함수 $G(s)=K_f/[(ms^2+cs+k)(Ls+R)+K_f^2s]$를 구성했다. 약 90Hz 공진을 재현하며, 역기전력 전기역학 감쇠가 실효 감쇠를 키운다. SQP-튜닝 PID에 <b>2A 전류 포화</b>를 포함한 폐루프로 스텝·스캐닝을 검증하고 Simscape로 교차검증했다.</p>
 
-      <div class="fig-row">
-        <figure class="fig">
-          <img src="figure/fig9_plant_step.png" alt="개루프 스텝 응답">
-          <figcaption><b>Fig 9.</b> 개루프 스텝 응답 — 저감쇠($\zeta=0.05$)로 인한 진동. 제어 필요성을 보여준다.</figcaption>
-        </figure>
-        <figure class="fig">
-          <img src="figure/fig11_step.png" alt="PID 폐루프 스텝 응답">
-          <figcaption><b>Fig 10.</b> PID 폐루프 스텝 — 50 Hz 대역 튜닝($K_p=374$)으로 진동 억제·정정시간 단축.</figcaption>
-        </figure>
-      </div>
-
-      <div class="fig-row">
-        <figure class="fig">
-          <img src="figure/fig12_scan.png" alt="스캐닝 추종">
-          <figcaption><b>Fig 11.</b> 사인 스캐닝 추종 — 폐루프가 기준 궤적을 낮은 오차로 따라간다.</figcaption>
-        </figure>
-        <figure class="fig">
-          <img src="figure/fig13_flexure_anim.gif" alt="유연기구 X-스캐닝 애니메이션">
-          <figcaption><b>Fig 12.</b> DCP 유연기구 X-스캐닝 모션(변위 과장). 8개 blade가 S자로 변형하며 가동부가 직진.</figcaption>
-        </figure>
-      </div>
-
-      <div class="step">
-        <span class="step-label">Simscape</span>
-        <span class="step-title">물리 네트워크 검증</span>
-        <p>전기·기계 도메인을 Simscape 물리 네트워크로 구성하고, 전류→힘·속도→역기전력 결합을 단위 정합되게 연결(28/28 포트)했다. 정상상태 변위 <span class="minicard mono" style="padding:0;border:0;box-shadow:none;background:none">0.204 mm</span> 가 이론값과 일치 — 모델 일관성 확인.</p>
-      </div>
-
-      <figure class="fig">
-        <img src="figure/simulink_vcm_simscape.PNG" alt="Simscape 물리 네트워크 블록선도">
-        <figcaption><b>Fig 13.</b> Simscape 물리 네트워크 블록선도 — 제어전압원·코일(R,L)·전류센서·역기전력원·질량·스프링·댐퍼·모션센서가 단위 정합되게 결선.</figcaption>
+      <figure class="fig narrow">
+        <img src="figure/fig13_flexure_anim.gif" alt="DCP X-스캐닝 애니메이션">
+        <figcaption><b>Fig 8.</b> 올바른 DCP 구조의 X-스캐닝 모션(변위 과장) — 플랫폼 +x, 중간바 +x/2, 16 힌지 틸트, 지점핀 고정, 코일이 자석 갭으로 진입.</figcaption>
       </figure>
     </section>
 
     <!-- ========== S08 ========== -->
     <section class="problem-section" id="s08">
       <div class="problem-head"><span class="problem-num">Section 08 · Final Design</span></div>
-      <h2 class="problem-title">최종 설계 <em>제원</em></h2>
-      <p class="problem-sub">모든 KPI를 여유 있게 충족 — 단, 제작성 제약은 물리한계 근거로 완화.</p>
+      <h2 class="problem-title">최종 설계 · <em>실현가능성 경계</em></h2>
+      <p class="problem-sub">모든 물리(행렬법·FEMM·발열·피로·응력집중)를 반영한 권장 설계 — d_c=0.5 스펙 준수.</p>
 
       <table class="spec">
-        <caption>Final specification</caption>
-        <thead><tr><th>분류</th><th>변수</th><th>값</th><th>KPI</th><th>판정</th></tr></thead>
+        <caption>Final design — DCP + Al7075, d_c=0.5</caption>
+        <thead><tr><th>항목</th><th>값</th><th>목표</th><th>판정</th></tr></thead>
         <tbody>
-          <tr><td>성능</td><td>1차 공진 $f_1$</td><td class="num">105.3 Hz</td><td class="num">&gt; 100</td><td class="pass">충족</td></tr>
-          <tr><td>성능</td><td>행정 @ 2A</td><td class="num">1.05 mm</td><td class="num">&gt; 1</td><td class="pass">충족</td></tr>
-          <tr><td>성능</td><td>행정 1 mm 도달</td><td class="num">1.9 A</td><td class="num">≤ 2</td><td class="pass">충족</td></tr>
-          <tr><td>유연기구</td><td>blade 두께 $t$</td><td class="num">0.43 mm</td><td>—</td><td></td></tr>
-          <tr><td>유연기구</td><td>blade 길이 $L$</td><td class="num">24.2 mm</td><td>—</td><td></td></tr>
-          <tr><td>유연기구</td><td>blade 폭 $b$</td><td class="num">8 mm</td><td>—</td><td></td></tr>
-          <tr><td>VCM</td><td>자석 반경 $r_m$</td><td class="num">6.5 mm</td><td>—</td><td></td></tr>
-          <tr><td>VCM</td><td>자석 높이 $h_m$</td><td class="num">25 mm</td><td>—</td><td></td></tr>
-          <tr><td>VCM</td><td>요크 $h_{y1}$ / 공극 $t_g$</td><td class="num">5.8 / 2.5 mm</td><td>—</td><td></td></tr>
-          <tr><td>제약</td><td>코일 와이어경 $d_c$</td><td class="num">0.3 mm</td><td class="num">&gt; 0.5</td><td class="fail">완화*</td></tr>
+          <tr><td>충족률 γ</td><td class="num">0.93</td><td class="num">≥ 1.0</td><td class="fail">경계</td></tr>
+          <tr><td>행정 @ 2A</td><td class="num">0.93 mm</td><td class="num">&gt; 1</td><td class="fail">−7%</td></tr>
+          <tr><td>1차 공진 $f_1$</td><td class="num">92.6 Hz</td><td class="num">&gt; 100</td><td class="fail">−7%</td></tr>
+          <tr><td>코일 선경 $d_c$</td><td class="num">0.5 mm</td><td class="num">&gt; 0.5</td><td class="pass">충족</td></tr>
+          <tr><td>VCM 직경</td><td class="num">20 mm</td><td class="num">≤ 20</td><td class="pass">충족</td></tr>
+          <tr><td>전류밀도 $J$</td><td class="num">10.2 A/mm²</td><td class="num">≤ 10</td><td class="pass">한계</td></tr>
+          <tr><td>피로응력</td><td class="num">101 MPa</td><td class="num">$=0.2S_y$</td><td class="fail">binding</td></tr>
         </tbody>
       </table>
-      <p style="font-size:14px;color:var(--ink-muted);font-family:var(--font-kr)">* $d_c>0.5$ mm 를 글자 그대로 지키면 행정·공진 동시충족 해가 존재하지 않음을 Section 04에서 한계식으로 증명. 물리적 불가피성을 근거로 완화.</p>
+
+      <p>제원: 유연기구 $L{=}19.6$, $t{=}0.23$, $b{=}5$mm, 스테이지 15mm, $K_{\text{eff}}{=}2.0$N/mm, $M_{\text{eff}}{=}7.8$g; VCM $r_m{=}7.4$, $h_{y1}{=}4.0$, $t_g{=}1.8$mm(Ø20), $B_g{=}597$mT, $K_f{=}1.04$N/A, $m_{\text{coil}}{=}3.1$g.</p>
 
       <figure class="fig narrow">
-        <img src="figure/fig6_final_spec.png" alt="최종 설계 요약">
-        <figcaption><b>Fig 14.</b> 최종 설계 요약 — 모든 성능 KPI를 여유 있게 만족하는 단일 설계점.</figcaption>
+        <img src="figure/fig_v2_final.png" alt="최종 설계 KPI">
+        <figcaption><b>Fig 9.</b> 최종 설계 KPI — 변위·공진 모두 목표의 약 93%($\gamma=0.926$). 피로응력이 binding.</figcaption>
       </figure>
 
       <div class="final-answer">
-        <div class="tag">결론</div>
-        <div class="ans">VCM-구동 DCP 유연 스테이지는 <b>f₁ = 105.3 Hz · 행정 1.05 mm @ 2A</b> 로 핵심 KPI를 동시 충족한다. 해석 → FEMM → 대리모델 3중 검증으로 자속밀도 오차를 160 → 12 mT 까지 줄였고, Simulink 3종 모델로 동특성과 제어 가능성을 확인했다. 와이어경 제약의 완화는 임의 선택이 아니라 힘상수가 소거되는 물리한계식에 근거한 불가피한 설계 결정이다.</div>
+        <div class="tag">최종 결론</div>
+        <div class="ans">발열·피로·응력집중까지 정직하게 반영하면, 권장 설계(DCP+Al7075, $d_c=0.5$ 스펙 준수)는 <b>γ≈0.93</b>으로 실현가능성 경계에 있다. 본 스펙은 모순이 아니라 물리적 frontier에서 약 7% 바깥의 도전적 문제이며, 완전 충족에는 능동 냉각(전류밀도 상향) 또는 한쪽 사양의 소폭 절충이 필요하다. — 끈질긴 전수감사가 두 모델 오류를 잡아내 "불가 → 경계"로 결론을 바로잡았다.</div>
       </div>
 
       <div class="problem-divider">초정밀시스템설계 프로젝트 · 소상연 202624279</div>
@@ -674,7 +592,6 @@ mjx-container[display="true"] { margin: 12px 0 !important; }
 </div>
 
 <script>
-// Active-section highlight + mobile sidebar close
 const tocItems = document.querySelectorAll('.toc-item');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
