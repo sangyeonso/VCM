@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+GPSM/
+*.venv/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+
+# Simulink / MATLAB
+slprj/
+*.slx.autosave
+*.asv
+
+# Binaries / installers (do not commit)
+*.exe
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

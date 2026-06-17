@@ -1,0 +1,302 @@
+% CVPR 스타일(2단) 한글 보고서 — XeLaTeX + kotex로 컴파일
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[letterpaper,top=1in,bottom=1in,left=0.8in,right=0.8in,columnsep=0.28in]{geometry}
+\usepackage{kotex}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\graphicspath{{../figure/}}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\usepackage{float}
+\usepackage{xcolor}
+\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage[colorlinks,allcolors=cvprblue,breaklinks]{hyperref}
+
+% CVPR풍 섹션 서식
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\setlength{\parskip}{0.2em}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,
+  keepspaces=true,showstringspaces=false,extendedchars=true,frame=single,
+  numbers=left,numberstyle=\tiny\color{gray},numbersep=3pt,tabsize=2,
+  aboveskip=3pt,belowskip=3pt,commentstyle=\color{gray!55!black}}
+
+\title{\vspace{-1.2em}\bfseries 보이스코일 모터 구동 1자유도 Double Compound Parallelogram\\
+유연기구 스테이지의 설계$\cdot$최적화 및 FEA 검증}
+\author{소상연 \quad 202624279\\ \normalsize 아주대학교 D.N.A.\,플러스융합학과 \quad 초정밀시스템설계 프로젝트}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ===== 전단 폭 아키텍처(teaser) =====
+\begin{figure*}[t]\centering
+\IfFileExists{../figure/fig_architecture_final.png}{\includegraphics[width=0.96\textwidth]{fig_architecture_final.png}}%
+{\fbox{\parbox[c][3.2cm][c]{0.9\textwidth}{\centering\small [아키텍처 그림: \texttt{figure/fig\_architecture\_final.png}]}}}
+\caption{설계$\cdot$해석 방법론 아키텍처. 해석모델(유연기구$\cdot$VCM) $\to$ SQP 최적화 $\to$ 구조$\cdot$자기 FEA 검증 $\to$ FEA-정보 surrogate 재최적화.}
+\label{fig:arch}
+\end{figure*}
+
+\begin{abstract}
+\small
+보이스코일 모터(VCM)로 구동되는 1자유도 정밀 위치결정 스테이지를 설계하였다. 유연기구는 대칭형 직선가이드인 Double Compound Parallelogram(DCP)을, 구동기는 원통형 대칭 moving-coil VCM을 채택하였다. 유연기구의 강성$\cdot$공진$\cdot$응력 해석모델과 Permeance 방법 기반 VCM 자기모델을 결합하고, 순차이차계획법(SQP)으로 스펙 충족률을 최대화하는 최적화를 수행하였다. 해석모델은 빔 유한요소 모달해석(공진 오차 $-2.8\%$)과 FEMM 자기 유한요소해석으로 검증하였으며, 자기모델이 공극 자속밀도를 과대평가($450\!\to\!291$\,mT)함을 확인하고 FEA-정보 기반 surrogate($R^2=0.99$)로 재최적화하였다. 권장 설계($d_c=0.3$\,mm)는 $f_1=105$\,Hz, 변위 $1.05$\,mm@2A로 전 요구사양을 충족하며 재료로는 Al6061이 최적임을 보였다. 코일 선경 $d_c>0.5$\,mm 강제 시 변위$\cdot$공진 동시 충족이 불가함을 물리적 한계식으로 규명하고 대안을 제시하였다.
+\end{abstract}
+
+\section{서론}
+원자현미경$\cdot$광학 스캐너 등 초정밀 장비는 나노미터급 분해능의 위치결정을 요구한다. 유연기구(flexure)는 마모와 백래시가 없고 단일체 가공으로 조립오차가 없으며 변형이 탄성영역에서 반복적$\cdot$예측가능하다는 장점이 있어 적합하다~\cite{smith,lec06}. 본 프로젝트의 목표는 VCM으로 구동되는 1자유도 유연기구 스테이지를 표~\ref{tab:req}의 요구사양을 충족하도록 설계$\cdot$최적화하고, 미충족 조건에 대해 대안을 제시하는 것이다. 전체 접근은 그림~\ref{fig:arch}에 요약된다.
+
+\begin{table}[h]\centering\caption{설계 요구사양}\label{tab:req}\small
+\begin{tabular}{ll}\toprule
+항목 & 조건 \\\midrule
+크기(구동기 포함) & $200\times200\times20$ mm 이내 \\
+최대 변위 & $>1$ mm \\
+1차 공진주파수 & $>100$ Hz \\
+최대 전류 & $=2$ A \\
+코일 최소 직경 & $>0.5$ mm \\\bottomrule
+\end{tabular}\end{table}
+
+\section{개념설계}
+\subsection{유연기구 토폴로지}
+판 스프링 가이드는 단일 guided blade의 강성 $k_1=12EI/L^3$를 기준으로 평행사변형$\to$복합(compound)$\to$대칭 복합으로 발전한다~\cite{lec06}. 본 설계는 \textbf{Double Compound Parallelogram}을 채택한다. 운동방향 강성 $k_x=2k_1=24EI/L^3$이며, 자유도가 1로 적절히 구속되고 평행사변형의 기생운동과 X방향 열오차를 대칭성으로 보상한다.
+
+\subsection{구동기 및 배치}
+구동기는 \textbf{원통형 대칭 moving-coil VCM}이다. 코일만 가동되어 이동질량이 작아 공진에 유리하며, 구동축을 운동축 X와 정확히 일치시킨다. 배치는 그림~\ref{fig:concept}와 같이 두께 $\le20$\,mm 판재의 단일체(Wire-EDM) 가공을 전제로 한다.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.95\linewidth]{fig0_concept.png}
+\caption{대칭 Double Compound Parallelogram 유연기구 + VCM 평면 배치.}\label{fig:concept}
+\end{figure}
+
+\subsection{설계변수 및 핵심 trade-off}
+설계변수는 유연기구 $\{t,L,b\}$, VCM $\{r_m,h_m,h_{y1},t_g,d_c\}$이다(표~\ref{tab:var}). 재료는 Al6061$\cdot$스프링강$\cdot$BeCu 3종을 비교한다. 핵심은 변위와 공진의 상충이다(그림~\ref{fig:tradeoff}): 큰 변위는 저강성을, 높은 공진은 고강성$\cdot$저질량을 요구한다.
+
+\begin{table}[h]\centering\caption{설계변수}\label{tab:var}\small
+\begin{tabular}{ll}\toprule
+구분 & 변수 \\\midrule
+유연기구 & $t,L,b$ (blade 두께/길이/면외높이) \\
+VCM & $r_m,h_m,h_{y1},t_g,d_c$ \\\bottomrule
+\end{tabular}\end{table}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{fig5_tradeoff.png}
+\caption{변위(@2A)와 1차 공진의 상충 및 스펙영역.}\label{fig:tradeoff}
+\end{figure}
+
+\section{해석 모델}
+\begin{table}[h]\centering\caption{주요 기호}\label{tab:nom}\small
+\begin{tabular}{ll}\toprule
+$k_x,m_{\text{eff}},f_1$ & 운동방향 강성, 유효질량, 1차 공진 \\
+$E,I,t,L,b$ & 탄성계수, 단면2차모멘트, blade 치수 \\
+$B_g,\Phi_g,K_f$ & 공극 자속밀도, 공극 자속, 힘상수 \\
+$r_m,h_m,h_{y1},t_g,d_c$ & VCM 자석$\cdot$요크$\cdot$공극$\cdot$선경 \\
+$n_{\text{eff}},L_m,I$ & 유효권선수, 평균턴길이, 코일전류 \\
+$\gamma$ & 스펙 충족률 (목적함수) \\\bottomrule
+\end{tabular}\end{table}
+\subsection{유연기구 모델}
+$I=bt^3/12$에 대해
+\begin{equation}
+k_x=\frac{24EI}{L^3},\quad x=\frac{F}{k_x},\quad f_1=\frac{1}{2\pi}\sqrt{\frac{k_x}{m_{\text{eff}}}},
+\end{equation}
+\begin{equation}
+\sigma=\frac{3Et(x/2)}{L^2},\;\; m_{\text{eff}}=m_{\text{stg}}+m_{\text{coil}}+\tfrac14 m_{\text{int}}+\tfrac13 m_{\text{bld}}.
+\end{equation}
+compound 구조에서 각 평행사변형단이 행정의 절반을 담당하므로 응력은 $x/2$ 기준이다. $m_{\text{eff}}$에서 중간 stage는 절반 진폭으로 움직여 유효질량의 $\tfrac14$, blade는 분포질량 근사로 $\tfrac13$로 기여한다(5.1절 FEA로 검증). 강성은 빔 강성행렬의 회전구속 응축($12EI/L^3$)과 직병렬 합성($24EI/L^3$)으로 검증하였다(오차 $\sim10^{-23}$)~\cite{lec08}.
+
+\subsection{VCM Permeance 모델}
+원통 대칭 구조를 Permeance(자기등가회로)로 모델링한다~\cite{kang2023}. 각 요소의 permeance는
+{\small
+\begin{align}
+&P_m=\frac{\pi\mu_0\mu_r r_m^2}{h_m},\;\; P_{y1}=\frac{\pi\mu_0\mu_s r_m^2}{h_{y1}},\\
+&P_g=\frac{2\pi\mu_0 h_{y1}}{\ln(1+t_g/r_m)},\;\; P_l=0.52\,(2\pi\mu_0 r_m),\\
+&P_{y2}=\frac{2\pi\mu_0\mu_s h_{y2}}{\ln\frac{r_m+t_g+t_{y3}/2}{r_m/2}},\\
+&P_{y3}=\frac{\pi\mu_0\mu_s[(r_m{+}t_g{+}t_{y3})^2-(r_m{+}t_g)^2]}{h_{y1}+h_m},
+\end{align}}%
+이며 $\mu_0$는 진공투자율, $\mu_r,\mu_s$는 자석$\cdot$요크 비투자율이다. 자석을 자속원 $\Phi_r=B_r\pi r_m^2$로 보면
+\begin{equation}
+\Phi_g=\Phi_r\frac{P_{\text{main}}}{P_m+P_l+P_{\text{main}}},\;\;
+P_{\text{main}}=\Big(\sum_{k}\tfrac{1}{P_k}\Big)^{-1}
+\end{equation}
+이다($k\in\{g,y1,y2,y3\}$). 공극 자속밀도 $B_g=\Phi_g/A_g$ ($A_g=2\pi(r_m{+}t_g/2)h_{y1}$), 유효권선수 $n_{\text{eff}}=\frac{h_{y1}+0.08h_m}{h_c}n$, 추력 $F=n_{\text{eff}}B_g L_m I$이다($L_m$은 평균 1턴 길이). 2023년 논문 최종설계를 재현하여 검증하였다(표~\ref{tab:vcmval}, $K_f$ 오차 $-6\%$).
+
+\begin{table}[h]\centering\caption{VCM 모델 검증 (논문 재현)}\label{tab:vcmval}\small
+\begin{tabular}{lccc}\toprule
+항목 & 모델 & 논문 & 오차 \\\midrule
+$B_g$ [mT] & 119.3 & 108.3 & $+10\%$ \\
+$K_f$ [N/A] & 0.858 & 0.910 & $-6\%$ \\
+코일질량 [g] & 3.55 & 4.1 & $-13\%$ \\\bottomrule
+\end{tabular}\end{table}
+
+\subsection{시스템 결합}
+\emph{VCM 코일질량 $\to$ $m_{\text{eff}}$}(공진)와 \emph{추력 $K_f I\to$ 변위}로 결합된다. 요구사양은 $I\le2$\,A에서 $x\ge1$\,mm \emph{이면서} $f_1>100$\,Hz를 동시 충족해야 한다.
+
+\section{시스템 최적화}
+\subsection{정식화}
+스펙 충족률 $\gamma$를 epigraph로 최대화한다:
+\begin{equation}
+\max~\gamma~~\text{s.t.}~~x_{\max}(2\text{A})\ge\gamma\,(1\text{mm}),~f_1\ge\gamma\,(100\text{Hz}),
+\end{equation}
+응력 $\le0.3S_y$, 요크 $B\le1.8$\,T, VCM 직경 $\le20$\,mm, footprint $\le200$\,mm 등을 제약으로 둔다. \texttt{fmincon} SQP + multi-start. $\gamma\ge1$이면 두 스펙 동시 충족.
+
+\subsection{근본 물리 한계}
+스트로크 조건 $x_{\max}=K_f I_{\max}/k_x\ge x_{\text{req}}$와 공진 조건 $k_x=m_{\text{eff}}(2\pi f_1)^2\ge m_{\text{eff}}(2\pi f_{\text{req}})^2$를 결합하면 $m_{\text{eff}}\le K_f I_{\max}/[x_{\text{req}}(2\pi f_{\text{req}})^2]$이다. 여기에 $m_{\text{eff}}\ge m_{\text{coil}}=\rho_{cu}\tfrac{\pi}{4}d_c^2 K_f/B_g$를 대입하면 힘상수 $K_f$가 소거되어
+\begin{equation}
+\frac{\rho_{cu}\,\tfrac{\pi}{4}d_c^2}{B_g}\le\frac{I_{\max}}{x_{\text{req}}(2\pi f_{\text{req}})^2}
+\end{equation}
+가 성립한다. 즉 충족 여부는 VCM 강화와 무관하게 \textbf{코일 선경 $d_c$와 $B_g$만으로 결정}되며, 굵은 선은 코일을 무겁게 하여 불리하다. FEA로 검증된 $B_g\approx0.3$\,T를 대입하면 코일만 고려한 필요조건은 $d_c\lesssim0.47$\,mm이고, 유연기구 질량까지 포함한 완전 최적화는 임계를 $d_c\approx0.32$\,mm로 낮춘다(4.3절). 따라서 $d_c>0.5$\,mm는 본질적으로 충족 불가하다.
+
+\subsection{결과}
+이하 최적화 결과는 5절의 FEA-검증 surrogate $B_g$를 반영한 값이다. 재료별 충족률은 Al6061 $\gamma{=}0.75$, 스프링강 $0.61$, BeCu $0.60$으로, 가장 가벼운 Al6061이 최선이며(그림~\ref{fig:opt}a) 코일 선경 충족률은 임계 $d_c\approx0.32$\,mm를 가진다(그림~\ref{fig:opt}b).
+
+\begin{figure}[H]\centering
+\begin{minipage}{0.485\linewidth}\centering\includegraphics[width=\linewidth]{fig1_material_gamma.png}\\{\small(a) 재료별 $\gamma$}\end{minipage}\hfill
+\begin{minipage}{0.485\linewidth}\centering\includegraphics[width=\linewidth]{fig2_dc_sensitivity.png}\\{\small(b) $d_c$ 민감도}\end{minipage}
+\caption{최적화 결과: (a) 재료 비교(Al6061 최선), (b) $d_c\lesssim0.32$\,mm에서 전 스펙 충족.}\label{fig:opt}
+\end{figure}
+
+\section{실험 및 검증}
+\subsection{모델 검증}
+두 해석모델을 독립적으로 검증하였다. 유연기구 강성은 빔 강성행렬의 회전구속 응축이 폐형식 $12EI/L^3$와, 그리고 단일 blade$\to$평행사변형$\to$compound$\to$double compound의 직병렬 합성이 $24EI/L^3$와 기계정밀도($\sim10^{-23}$) 내로 일치함을 확인하였다. VCM Permeance 모델은 2023년 논문 최종설계(직경 13\,mm)를 재현하여 힘상수 $K_f$ 오차 $-6\%$, 공극자속 $+10\%$로 검증하였다(표~\ref{tab:vcmval}). 이로써 두 모델의 형상-성능 사상이 신뢰 가능함을 확보하고, 이를 결합해 최적화(4절)와 FEA 교차검증(이하)을 수행한다.
+\subsection{구조 FEA}
+DCP를 2D 프레임 빔 유한요소(consistent mass)로 모달해석하였다. 1차 공진 133.8\,Hz로 해석모델(137.7\,Hz)과 \textbf{$-2.8\%$} 일치하여 유효질량 근사를 검증하였다(그림~\ref{fig:mode}). 1차 모드는 blade의 S자 변형을 통한 stage의 X 병진이다.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.62\linewidth]{fig7_fea_modeshape.png}
+\caption{빔 FEM 1차 모드형상(133.8\,Hz, X 병진).}\label{fig:mode}
+\end{figure}
+
+\subsection{자기 FEA}
+원통 대칭 VCM을 FEMM 축대칭 자기정역학(pyFEMM 자동화)으로 해석하였다. 먼저 논문 형상에서 $B_g=98.4$\,mT로 논문 FEA(105\,mT)를 $\sim8\%$ 이내로 재현하여 해석 셋업을 검증하였다(표~\ref{tab:femm}). 본 최적해 형상에서는 해석모델이 $B_g$를 과대평가함을 확인하였다(\textbf{$450\!\to\!291$\,mT}, 그림~\ref{fig:flux}). 또한 공극 $t_g$를 줄이면 $B_g$가 증가($t_g$ $3.0\!\to\!1.5$\,mm에서 $277\!\to\!382$\,mT)하는 설계 레버를 정량적으로 확인하였으며, 이는 해석모델이 포착하지 못한 것이다.
+
+\begin{table}[t]\centering\caption{FEMM 자기 FEA 검증 ($B_g$).}\label{tab:femm}\small
+\begin{tabular}{lcc}\toprule
+형상 & $(r_m,h_{y1},t_g)$ mm & $B_g$ [mT] \\\midrule
+논문(셋업검증) & $(3.0,9.0,2.5)$ & 98.4 \;(FEA 105) \\
+최적해 & $(6.2,5.1,2.8)$ & 290.6 \;(모델 450) \\
+권장설계 & $(6.5,5.8,2.5)$ & 222.2 \\\bottomrule
+\end{tabular}\end{table}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.47\linewidth]{fig8_femm_flux.png}
+\caption{권장 VCM의 FEMM 자속밀도($|B|$)와 자속선.}\label{fig:flux}
+\end{figure}
+
+\subsection{FEA-정보 기반 surrogate}
+pyFEMM으로 48점 격자를 해석하여 $B_g(r_m,h_{y1},t_g)$의 2차 다항 surrogate를 적합($R^2=0.99$, 그림~\ref{fig:surr}a)하고 최적화의 자기모델로 대체하였다. surrogate는 공극 축소 시 $B_g$ 급증하는 설계 레버를 포착한다(그림~\ref{fig:surr}b).
+
+\begin{figure}[H]\centering
+\begin{minipage}{0.47\linewidth}\centering\includegraphics[width=\linewidth]{fig3_bg_parity.png}\\{\small(a) surrogate vs FEMM}\end{minipage}\hfill
+\begin{minipage}{0.5\linewidth}\centering\includegraphics[width=\linewidth]{fig4_bg_tg_lever.png}\\{\small(b) $B_g$--$t_g$ 레버}\end{minipage}
+\caption{FEA-정보 surrogate: (a) 적합 정확도($R^2{=}0.99$), (b) 공극 축소 시 $B_g$ 증가.}\label{fig:surr}
+\end{figure}
+
+\section{결과 및 분석}
+\subsection{최종 설계안}
+surrogate를 반영한 FEA-정확 재최적화로 세 선경($d_c$) 후보를 비교하였다(표~\ref{tab:final}). $d_c$가 가늘수록 권선수가 늘어 추력$\cdot$공진이 향상되나 발열이 증가한다. $d_c=0.5$\,mm는 변위$\cdot$공진이 미달하고 $d_c=0.4$\,mm는 경계(약 87\%)이며, \textbf{$d_c=0.3$\,mm가 전 요구사양을 충족}한다($f_1=105$\,Hz, 변위 $1.05$\,mm@2A, 1\,mm를 $1.9$\,A로 구동, 그림~\ref{fig:final}).
+
+\begin{table}[h]\centering\caption{최종 설계안 비교 (Al6061, FEA-정확). 굵은 행이 권장. 단위: $d_c,x$ [mm], $f_1$ [Hz], $I$ [A], $m_c$ [g], $Q$ [W].}\label{tab:final}\footnotesize
+\begin{tabular}{cccccc}\toprule
+$d_c$ & $f_1$ & $x_{2\text{A}}$ & $I_{1\text{mm}}$ & $m_c$ & $Q$ \\\midrule
+0.50 & 75.3 & 0.75 & 2.65 & 7.0 & 2.4 \\
+0.40 & 87.4 & 0.87 & 2.29 & 7.0 & 4.3 \\
+\textbf{0.30} & \textbf{105.3} & \textbf{1.05} & \textbf{1.90} & \textbf{6.9} & \textbf{9.3} \\\bottomrule
+\end{tabular}\end{table}
+
+권장 제원: 유연기구 $t=0.43$, $L=24.2$, $b=8$\,mm; VCM $r_m=6.5$, $h_m=25$, $h_{y1}=5.8$, $t_g=2.5$\,mm(직경 20\,mm). blade 응력 안전율 3.33.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.82\linewidth]{fig6_final_spec.png}
+\caption{권장 설계($d_c=0.3$)의 요구 대비 달성.}\label{fig:final}
+\end{figure}
+
+\subsection{스펙 충족 분석 및 대안}
+$d_c\ge0.5$\,mm 강제 시 최선(Al)이 75\%에 그쳐 변위$\cdot$공진 동시 충족이 불가하며, $d_c\lesssim0.32$\,mm면 충족 가능하다. $d_c=0.5$\,mm를 고수할 경우의 대안을 surrogate 기반으로 정량 평가하였다(표~\ref{tab:sens}). 유연기구 재료 단독 교체로는 한계가 분명하여(Mg가 최선이나 $\gamma=0.81$), 단일 레버 중에서는 \emph{moving stage 중공화}가 가장 효과적이다($\gamma=0.85$). 경량 재료$\cdot$중공화$\cdot$강한 자기회로(N52$\cdot$FeCo, $B_g$ $\sim$30\% 향상)를 \emph{모두 결합}해도 $\gamma=0.99$로 경계에 머문다. 즉 $d_c=0.5$\,mm에서는 어떤 조합으로도 완전 충족이 어렵고, 코일 선경 완화가 본질적 해법임을 재확인한다.
+
+\begin{table}[h]\centering\caption{재료/자기회로/경량화 민감도 ($d_c=0.5$mm 고정).}\label{tab:sens}\footnotesize
+\begin{tabular}{lcc}\toprule
+변경 & $\gamma$ & $f_1$[Hz] \\\midrule
+Al6061 (기준) & 0.75 & 75.3 \\
+Mg(AZ31)로 교체 & 0.81 & 81.2 \\
+Be로 교체 & 0.80 & 79.7 \\
+Ti-6Al-4V로 교체 & 0.69 & 68.9 \\
+Al + 자석/요크(N52$\cdot$FeCo) & 0.82 & 82.3 \\
+Al + stage 중공화 & 0.85 & 85.4 \\
+Mg + 자석 + 중공 & \textbf{0.99} & 98.6 \\
+Be + 자석 + 중공 & 0.95 & 95.3 \\\bottomrule
+\end{tabular}\end{table}
+
+대안 정리: (A) 선경을 $0.3$--$0.4$\,mm로 완화(권장), (B) 한쪽 사양 절충(공진 또는 변위), (C) 표~\ref{tab:sens}의 경량$\cdot$자기회로 조합($\gamma\!\approx\!0.99$), (D) 전류 상향. 레버$\cdot$브리지 증폭은 lost motion과 공진 저하로 위 한계식을 벗어나지 못해 비권장한다.
+
+\subsection{한계 및 향후}
+권장 설계는 1\,mm 유지 시 약 9.3\,W 발열로 방열 설계가 필요하다. 향후 FEMM-in-the-loop 또는 베이지안 최적화와 시제작 검증을 수행할 수 있다.
+
+\section{동특성 및 제어 (Simulink)}
+설계된 스테이지의 동특성과 제어 성능을 Simulink로 검증하였다. 플랜트는 권장 설계 파라미터($m_{\text{eff}}{=}14.7$\,g, $k_x{=}6.4$\,kN/m, $K_f{=}3.39$\,N/A, 코일 $R{=}2.6\,\Omega$, $L{\approx}1.5$\,mH, $\zeta{\approx}0.05$)로, 전기(R,L,역기전력)--전자기($F{=}K_f I$)--기계($m\ddot x{+}c\dot x{+}k_x x{=}F$)를 결합해 구성한다.
+
+\subsection{개루프 동특성}
+전압--변위 전달함수 $G(s)=K_f/[(ms^2{+}cs{+}k_x)(Ls{+}R){+}K_f^2 s]$의 보드선도는 약 109\,Hz에서 공진 피크를 보여(그림~\ref{fig:bode}) 해석 1차 공진($f_1{=}105$\,Hz)을 재현한다. 역기전력 전기역학 감쇠($K_f^2/R{\approx}4.5$\,N$\cdot$s/m)가 기계 감쇠보다 커 실효 감쇠비 $\zeta_{\text{eff}}{\approx}0.28$이다.
+
+\begin{figure}[H]\centering\includegraphics[width=0.9\linewidth]{fig10_plant_bode.png}
+\caption{개루프 플랜트 보드선도($V\!\to\!x$): 약 109\,Hz 공진.}\label{fig:bode}\end{figure}
+
+\subsection{폐루프 위치제어}
+SQP로 튜닝한 PID($\sim$50\,Hz 대역폭)에 \textbf{2\,A 전류 포화}를 포함해 폐루프를 구성하였다(그림~\ref{fig:ctrl}). 1\,mm 스텝은 정상상태에 1.9\,A가 필요해 2\,A 한계 근처에서 동작하므로 정착 $\sim$64\,ms로 대전류 모션의 제약이 드러난다. 10\,Hz 정현파($\pm0.5$\,mm) 스캐닝 추종오차는 RMS $82\,\mu$m로 공진 이하 대역에서 양호하다.
+
+\begin{figure}[H]\centering
+\begin{minipage}{0.49\linewidth}\centering\includegraphics[width=\linewidth]{fig11_step.png}\\{\small(a) 1\,mm 스텝}\end{minipage}\hfill
+\begin{minipage}{0.49\linewidth}\centering\includegraphics[width=\linewidth]{fig12_scan.png}\\{\small(b) 10\,Hz 스캐닝}\end{minipage}
+\caption{폐루프 제어: (a) 스텝응답(전류한계 근처), (b) 10\,Hz 스캐닝 추종(RMS 82\,$\mu$m).}\label{fig:ctrl}\end{figure}
+
+\subsection{Simscape 물리모델}
+동일 시스템을 Simscape 물리네트워크(전기 R--L--제어전압원, 기계 질량--스프링--댐퍼, 전류$\cdot$운동센서로 전자기 결합)로도 구성해 교차검증하였다. 1\,V 스텝 정상상태 변위 0.204\,mm가 이론치 및 블록선도 모델과 일치하고, 속도 기반 역기전력으로 안정 감쇠됨을 확인하였다. 스캐닝 모션 시각화는 보충자료 애니메이션(\texttt{fig13\_flexure\_anim.gif})으로 제공한다.
+
+\section{결론}
+VCM 구동 1자유도 DCP 유연기구 스테이지를 설계$\cdot$최적화$\cdot$FEA 검증하였다. (i) Al6061이 최적이며 권장 설계($d_c=0.3$)는 $f_1=105$\,Hz, $1.05$\,mm@2A로 전 스펙 충족. (ii) 해석모델$\to$FEMM 검증$\to$FEA-정보 surrogate의 3단 정밀화로 추력 추정 정확도를 높였다($B_g$ 오차 $160\!\to\!12$\,mT). (iii) $d_c>0.5$\,mm 강제 시 동시 충족 불가를 물리적 한계식으로 규명하고 대안을 제시하였다.
+
+{\small
+\begin{thebibliography}{9}
+\bibitem{banik2007} R. Banik, D.-G. Gweon, ``Design and optimization of voice coil motor for active vibration isolation,'' \emph{Sensors and Actuators A}, 137:236--243, 2007.
+\bibitem{kang2023} S. Kang \emph{et al.}, ``Design of a Finger-Sized Voice Coil Motor for High-Speed Scanners,'' \emph{IJPEM}, 24:209--217, 2023.
+\bibitem{lec06} 강의자료, ``제06강 가이드 메커니즘 설계,'' 초정밀시스템설계.
+\bibitem{lec08} 강의자료, ``제08강 유연 가이드 메커니즘의 해석적 설계.''
+\bibitem{smith} S. T. Smith, \emph{Foundations of Ultraprecision Mechanism Design}.
+\bibitem{femm} D. Meeker, \emph{FEMM 4.2 Finite Element Method Magnetics}.
+\end{thebibliography}
+}
+
+\onecolumn
+\appendix
+\section{설계 코드}
+설계$\cdot$해석$\cdot$최적화$\cdot$FEA$\cdot$제어 전체 소스코드를 아래에 첨부한다. (그림 생성 유틸 \texttt{make\_figures.m}, \texttt{make\_concept\_fig.m}, surrogate 계수 \texttt{bg\_coeffs.txt}는 제출물에 포함.)
+
+\subsection{유연기구 모델 — \texttt{flexure\_model.m}}
+\lstinputlisting[language=Matlab]{../matlab/flexure_model.m}
+\subsection{VCM Permeance 모델 — \texttt{vcm\_model.m}}
+\lstinputlisting[language=Matlab]{../matlab/vcm_model.m}
+\subsection{시스템 최적화 — \texttt{opt\_design.m}}
+\lstinputlisting[language=Matlab]{../matlab/opt_design.m}
+\subsection{최종 설계안 — \texttt{final\_design.m}}
+\lstinputlisting[language=Matlab]{../matlab/final_design.m}
+\subsection{구조 FEA (빔 프레임 모달) — \texttt{fea\_frame\_modal.m}}
+\lstinputlisting[language=Matlab]{../matlab/fea_frame_modal.m}
+\subsection{재료/자기회로 민감도 — \texttt{material\_study.m}}
+\lstinputlisting[language=Matlab]{../matlab/material_study.m}
+\subsection{FEMM $B_g$ surrogate 적합 — \texttt{bg\_surrogate.py}}
+\lstinputlisting[language=Python]{../femm/bg_surrogate.py}
+\subsection{pyFEMM 자동 자기해석 — \texttt{vcm\_femm.py}}
+\lstinputlisting[language=Python]{../femm/vcm_femm.py}
+\subsection{FEMM 축대칭 자기해석 (Lua) — \texttt{vcm\_axi.lua}}
+\lstinputlisting[language={[5.1]Lua}]{../femm/vcm_axi.lua}
+\subsection{Simulink 개루프 플랜트 — \texttt{build\_vcm\_plant.m}}
+\lstinputlisting[language=Matlab]{../simulink/build_vcm_plant.m}
+\subsection{Simulink 폐루프 제어 — \texttt{build\_vcm\_control.m}}
+\lstinputlisting[language=Matlab]{../simulink/build_vcm_control.m}
+\subsection{Simscape 물리모델 — \texttt{build\_vcm\_simscape.m}}
+\lstinputlisting[language=Matlab]{../simulink/build_vcm_simscape.m}
+\subsection{유연기구 모션 애니메이션 — \texttt{animate\_flexure.m}}
+\lstinputlisting[language=Matlab]{../simulink/animate_flexure.m}
+
+\end{document}
